@@ -8,7 +8,8 @@ import (
 )
 
 type Handler struct {
-	Schema *graphql.Schema
+	Schema   *graphql.Schema
+	Explorer Explorer
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -23,8 +24,11 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleGET(w http.ResponseWriter, r *http.Request) {
-	// Handle GET requests for GraphQL queries
-	// You can implement your logic here to process the query parameters and execute the GraphQL query
+	if e := h.Explorer; e != nil {
+		e.ServeHTTP(w, r)
+		return
+	}
+	http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 }
 
 func (h *Handler) handlePOST(w http.ResponseWriter, r *http.Request) {
