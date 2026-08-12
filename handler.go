@@ -38,7 +38,8 @@ func (h *Handler) handlePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := h.Schema.Exec(r.Context(), params.Query, params.OperationName, params.Variables)
+	ctx := ContextWithRequest(r.Context(), r)
+	result := h.Schema.Exec(ctx, params.Query, params.OperationName, params.Variables)
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(result); err != nil {
